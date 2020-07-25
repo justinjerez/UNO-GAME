@@ -1,7 +1,8 @@
-from classes.player import *
+from classes.card import Card
+from classes.deck import Deck
+from classes.player import Player
 
 from functions.abstracts import *
-
 
 # Welcome presentation
 clear_console()
@@ -14,7 +15,7 @@ players = []
 while(True):
     try:
         num_of_players = int(input('\nWrite the num of players(2-4):'))
-        
+
         if num_of_players > 4 or num_of_players < 2:
             raise TypeError
 
@@ -28,13 +29,22 @@ while(True):
         print('Entry out of range. Min 2 player - Max 4 players')
 
 # Assign players names
+print('Insert players names\n')
+
 count = 0
 while count < num_of_players:
-    name = input('Player {}: '.format(count + 1))
+    player_name = input('Player {}: '.format(count + 1))
 
-    if name == '':
-        name = 'Player {}'.format(count + 1)
+    if player_name == '':
+        player_name = 'Player {}'.format(count + 1)
 
     # Create player
-    Player(name)
+    Player(player_name)
     count += 1
+
+# Creating decks
+main_deck = Deck()
+stock_deck = Deck() 
+
+# Cleaning stock
+stock_deck.clear()
