@@ -1,5 +1,6 @@
 from .card import Card
 
+import random
 
 class Deck(object):
 
@@ -12,6 +13,7 @@ class Deck(object):
     # Clear Deck
     def clear(self):
         del self.cards[:]
+
 
     # Fill Deck
     def fill(self):
@@ -36,4 +38,6 @@ class Deck(object):
                         count += 1
 
     def shuffle(self):
-        pass
+        for i in range(len(self.cards) - 1, 0, -1):
+            r = random.randint(0, i);
+            self.cards[i], self.cards[r] = self.cards[r], self.cards[i]

@@ -8,6 +8,7 @@ from functions.abstracts import *
 clear_console()
 welcome()
 
+""" CREATE PLAYERS - START """
 # Create players
 players = []
 
@@ -42,9 +43,13 @@ while count < num_of_players:
     Player(player_name)
     count += 1
 
+    clear_console()
+""" CREATE PLAYERS - END """
+
 # Creating decks
 main_deck = Deck()
 stock_deck = Deck() 
 
 # Cleaning stock
 stock_deck.clear()
+
