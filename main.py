@@ -3,6 +3,7 @@ from classes.deck import Deck
 from classes.player import Player
 
 from functions.abstracts import *
+from functions.functionality import *
 
 # Welcome presentation
 clear_console()
@@ -24,9 +25,11 @@ while(True):
         break
 
     except ValueError:
+        clear_console()
         print('You must insert an integer.')
 
     except TypeError:
+        clear_console()
         print('Entry out of range. Min 2 player - Max 4 players')
 
 # Assign players names
@@ -40,10 +43,10 @@ while count < num_of_players:
         player_name = 'Player {}'.format(count + 1)
 
     # Create player
-    Player(player_name)
+    players.append(Player(player_name))
     count += 1
-
-    clear_console()
+    
+clear_console()
 """ CREATE PLAYERS - END """
 
 # Creating decks
@@ -53,3 +56,6 @@ stock_deck = Deck()
 # Cleaning stock
 stock_deck.clear()
 
+hand_out_cards(players, main_deck)
+
+players[0].show_hand()
