@@ -2,13 +2,6 @@ import time
 
 from functions.abstracts import *
 
-# Return the amount of cards of a player or a deck
-
-
-def cards_amount(array):
-    return len(array.cards)
-
-
 # Refill a deck
 def refill_deck(filling, emptying):
     for card in emptying.cards:
@@ -17,8 +10,6 @@ def refill_deck(filling, emptying):
     emptying.clear()
 
 # Gives to all players 7 cards
-
-
 def hand_out_cards(players, deck):
     for player in players:
         count = 0
@@ -27,11 +18,8 @@ def hand_out_cards(players, deck):
             count += 1
 
 # Moves a card from point a to point b
-
-
 def move_card(sender, receiver, card_position):
     receiver.cards.append(sender.cards.pop(card_position))
-
 
 def say_uno(player_name):
     print('You have only one card, say UNO!. PRESS CRTL + C')
@@ -58,3 +46,13 @@ def say_uno(player_name):
             input("\nPress enter to continue...")
             clear_console()
             sys.exit()
+
+def is_playable(player_card, table_card):
+    if player_card.suit is 'Wilds':
+        return True
+    else:
+        if player_card.suit is table_card.suit or player_card.value is table_card.value:
+            return True
+        
+    return False
+    
