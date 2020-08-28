@@ -16,7 +16,5 @@ def welcome():
     time.sleep(1)
     print('By Justin Jerez')
     time.sleep(1)
-    print('A Cincinnatus project')
-    time.sleep(1)
     input('\n Press any key to start the game...')
     clear_console()

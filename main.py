@@ -16,9 +16,9 @@ players = []
 # Players entry validation
 while(True):
     try:
-        num_of_players = int(input('\nWrite the num of players(2-4):'))
+        players_num = int(input('\nWrite the num of players(2-4):'))
 
-        if num_of_players > 4 or num_of_players < 2:
+        if players_num > 4 or players_num < 2:
             raise TypeError
 
         clear_console()
@@ -36,7 +36,7 @@ while(True):
 print('Insert players names\n')
 
 count = 0
-while count < num_of_players:
+while count < players_num:
     player_name = input('Player {}: '.format(count + 1))
 
     if player_name == '':
@@ -62,78 +62,124 @@ hand_out_cards(players, main_deck)
 """ START THE GAME"""
 
 GAME_OVER = False # Game state
-current_turn = 0  # Current Turn
+ct_turn = 0  # Current Turn
 clockwise = True  # Defines the game flow
 
-# Showing table card to start the game
+# Moving a card to the table
 move_card(main_deck, stock_deck, -1)
 table = stock_deck.cards[-1]
 
 # Validating first card on table
 if table.suit == 'Wilds':
     # If first card on table is from wildcards suit, return it and shuffle again
-    refill_deck(main_deck, stock_deck)
-    move_card(main_deck, stock_deck, -1)
-    table = stock_deck.cards[-1]
+    while table.suit == 'Wilds':
+        refill_deck(main_deck, stock_deck, players)
+        move_card(main_deck, stock_deck, -1)
+        table = stock_deck.cards[-1]
 
 else:
+    # If first card on table is an action card carry out the action
     if table.value == '+2':
         print('First card on table is +2, first player takes them')
+        for i in range(0, 2):
+            move_card(main_deck, players[ct_turn], -1)
         input('\n Press any key to continue...')
         clear_console()
 
     elif table.value == 'reverse':
         print('First card on table is reverse, the game flow has changed')
+        ct_turn = len(players) - 1
+        clockwise = False
         input('\n Press any key to continue...')
         clear_console()
 
     elif table.value == 'pass':
         print('First card on table is pass, first player turn has been skipped')
+        ct_turn += 1
         input('\n Press any key to continue...')
-        clear_console()
+        clear_console() 
 
 # START PLAYING
 while not GAME_OVER:
 
     """  Some validation between turns """
     # If player has only a card must say uno to win
-    if len(players[current_turn].cards) < 1:
-        say_uno(players[current_turn].get_name())
+    if len(players[ct_turn].cards) < 1:
+        say_uno(players[ct_turn].get_name())
 
     # If main deck ran out of cards, refill. If both deck ran out cards end the game
-    if len(main_deck.cards) <= 4:
-        if len(stock_deck.cards) >= 4:
-            refill_deck(main_deck, stock_deck)
-        else:
-            print('\nRan out of cards')
-            print('......GAME OVER......')
-            break
+    refill_deck(main_deck, stock_deck, players)
     
     # Turn actions
     while True:
         try:
             # Showing player name
-            print("\n{}'s turn".format(players[current_turn].get_name()))
+            print("\n{}'s turn".format(players[ct_turn].get_name()))
             
             # Showing table
             print('\nTable:', table.show())
 
             #  showing player hand
             print("\n0: Take a card")
-            players[current_turn].show_hand()
+            players[ct_turn].show_hand()
 
             # Selecting an action / take or throw a cards
-            option = int(input('\nChoose a card from above: '))
+            position = int(input('\nChoose a card from above: '))
 
-            if option == 0:
-                print('You took:', main_deck.cards[-1].show());
+            if position > len(players[ct_turn].cards) or position < 0:
+                raise TypeError
 
-                if is_playable(main_deck.cards[-1], table):
-                    print('Card is playable')
             else:
-               if is_playable(players[current_turn].cards[option - 1], table):
-                   print('Card is playable')
-        
+                # Looking for the next player and the game direction in the next turn
+                next_player, clockwise = next_turn(players, ct_turn, clockwise, stock_deck.cards[-1])
+
+                if position == 0:
+                    print('\nYou took:', main_deck.cards[-1].show());
+
+                    if is_playable(main_deck.cards[-1], table):
+                        print("The Card has been played")
+                        # moving card from deck to stock
+                        move_card(main_deck, stock_deck, -1)
+
+                        # Doing the actions of the card action if the last card was a card action
+                        table = carry_out_action(players[ct_turn], players[next_player], main_deck, stock_deck, table)
+
+                    else:
+                        print("The Card can't be played")
+                        # moving card from deck to player's hand
+                        move_card(main_deck, players[ct_turn], -1)
+
+                else:
+                    print('\nYou chose:', players[ct_turn].cards[position - 1].show());
+
+                    if is_playable(players[ct_turn].cards[position - 1], table):
+                        print("The Card has been played")
+                        # moving card from player's hand to stock
+                        move_card(players[ct_turn], stock_deck, position - 1)
+                        
+                        # Doing the actions of the card action if the last card was a card action
+                        table = carry_out_action(players[ct_turn], players[next_player], main_deck, stock_deck, table)
+
+                    else:
+                        print("The Card can't be played")
+                        clear_console()
+                        raise TypeError
+            
+            if len(players[ct_turn].cards) == 1:
+                refill_deck(main_deck, stock_deck, players)
+                say_uno(players[ct_turn], main_deck)
+
+            # Changing turn
+            ct_turn = next_player
+
+            input('\n Press any key to continue the game...')
+            clear_console() # Clear screen
+    
         except ValueError:
-            pass
+            clear_console()
+            print('Strings are not allowed, please enter an integer between 1 and', len(players[ct_turn].cards))
+
+        except TypeError:
+            clear_console()
+            print("Entry out of range or you chose card that can't be played")
 """ END THE GAME """
