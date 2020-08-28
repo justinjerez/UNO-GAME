@@ -169,6 +169,13 @@ while not GAME_OVER:
                 refill_deck(main_deck, stock_deck, players)
                 say_uno(players[ct_turn], main_deck)
 
+            #Cheking if current player has reach 500 points
+            if players[ct_turn].get_score() >= 500:
+                clear_console() # Clear screen
+                print("{} won with {} points".format(players[ct_turn].get_name(), players[ct_turn].get_score()))
+                print('......GAME OVER......')
+                sys.exit()
+
             # Changing turn
             ct_turn = next_player
 
