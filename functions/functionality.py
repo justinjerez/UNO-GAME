@@ -147,7 +147,7 @@ def say_uno(player, deck):
         except KeyboardInterrupt:
             clear_console()
             print("{} wins".format(player.get_name()))
-            print('GAME OVER')
+            print('......GAME OVER......')
             input("\nPress enter to continue...")
             clear_console()
             sys.exit()
